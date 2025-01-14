@@ -1,0 +1,41 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\tofan\\Documents\\Repos\\openGL_d_day\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{2CEE431E-8572-4B06-9225-5B8FCA3843BD}|openGL_d_day\\openGL_d_day.vcxproj|C:\\Users\\tofan\\Documents\\Repos\\openGL_d_day\\openGL_d_day\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{2CEE431E-8572-4B06-9225-5B8FCA3843BD}|openGL_d_day\\openGL_d_day.vcxproj|solutionrelative:openGL_d_day\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "main.cpp",
+              "DocumentMoniker": "C:\\Users\\tofan\\Documents\\Repos\\openGL_d_day\\openGL_d_day\\main.cpp",
+              "RelativeDocumentMoniker": "openGL_d_day\\main.cpp",
+              "ToolTip": "C:\\Users\\tofan\\Documents\\Repos\\openGL_d_day\\openGL_d_day\\main.cpp",
+              "RelativeToolTip": "openGL_d_day\\main.cpp",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAAiAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-01-14T12:16:11.433Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
