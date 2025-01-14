@@ -1,0 +1,17 @@
+# Visual Studio files
+.vs/
+*.vcxproj.user
+*.vcxproj.filters
+*.VC.db
+*.suo
+
+# Build output
+x64/
+Debug/
+Release/
+bin/
+obj/
+
+# OS-generated files
+.DS_Store
+Thumbs.db
