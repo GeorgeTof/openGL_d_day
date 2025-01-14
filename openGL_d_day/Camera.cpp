@@ -5,7 +5,7 @@ namespace gps {
     Camera::Camera(glm::vec3 cameraPosition, glm::vec3 cameraTarget, glm::vec3 cameraUp) {
         this->cameraPosition = cameraPosition;
         this->cameraTarget = cameraTarget;
-        this->cameraFrontDirection = glm::normalize(cameraPosition - cameraTarget);
+        this->cameraFrontDirection = glm::normalize(cameraTarget - cameraPosition);
         this->cameraRightDirection = glm::normalize(glm::cross(cameraUp, this->cameraFrontDirection));
         this->cameraUpDirection = glm::cross(cameraFrontDirection, cameraRightDirection);
         rotate(pitch, yaw);

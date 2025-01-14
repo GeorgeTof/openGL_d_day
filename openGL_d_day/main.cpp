@@ -53,10 +53,10 @@ GLuint lightColorLoc;
 
 
 gps::Camera myCamera(
-				glm::vec3(0.0f, 2.0f, 5.5f), 
+				glm::vec3(15.2f, 13.5f, 67.6f), 
 				glm::vec3(0.0f, 0.0f, 0.0f),
 				glm::vec3(0.0f, 1.0f, 0.0f));
-float cameraSpeed = 0.01f;
+float cameraSpeed = 0.025f;
 
 bool pressedKeys[1024];
 GLfloat lightAngle;
