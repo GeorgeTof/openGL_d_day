@@ -150,7 +150,20 @@ void mouseCallback(GLFWwindow* window, double xPos, double yPos) {
 }
 
 void scrollCallback(GLFWwindow* window, double xOffset, double yOffset) {
-	myCamera.scrollCallback(window, xOffset, yOffset);
+	static float fov = 45.0f; // Default FOV
+
+	// Adjust FOV based on scroll input
+	fov -= static_cast<float>(yOffset);
+	if (fov < 1.0f) fov = 1.0f;     // Clamp to avoid extreme zoom-in
+	if (fov > 90.0f) fov = 90.0f;   // Clamp to avoid extreme zoom-out
+
+	// Update projection matrix
+	float aspectRatio = static_cast<float>(glWindowWidth) / static_cast<float>(glWindowHeight);
+	projection = glm::perspective(glm::radians(fov), aspectRatio, 0.1f, 1000.0f);
+
+	// Use your shader program and send the updated projection matrix to it
+	myCustomShader.useShaderProgram();
+	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 }
 
 void processMovement()
@@ -216,6 +229,7 @@ bool initOpenGLWindow()
 	glfwSetWindowSizeCallback(glWindow, windowResizeCallback);
 	glfwSetKeyCallback(glWindow, keyboardCallback);
 	glfwSetCursorPosCallback(glWindow, mouseCallback);
+	glfwSetScrollCallback(glWindow, scrollCallback);
 	//glfwSetInputMode(glWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	glfwMakeContextCurrent(glWindow);
