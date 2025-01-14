@@ -119,8 +119,16 @@ void keyboardCallback(GLFWwindow* window, int key, int scancode, int action, int
 	if (key == GLFW_KEY_M && action == GLFW_PRESS)
 		showDepthMap = !showDepthMap;
 
-	if (key >= 0 && key < 1024)
-	{
+	if (key == GLFW_KEY_1 && action == GLFW_PRESS)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // Default rendering mode
+
+	if (key == GLFW_KEY_2 && action == GLFW_PRESS)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Wireframe mode
+
+	if (key == GLFW_KEY_3 && action == GLFW_PRESS)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_POINT); // Point mode
+
+	if (key >= 0 && key < 1024) {
 		if (action == GLFW_PRESS)
 			pressedKeys[key] = true;
 		else if (action == GLFW_RELEASE)
@@ -231,6 +239,8 @@ void initOpenGLState()
 	glFrontFace(GL_CCW); // GL_CCW for counter clock-wise
 
 	glEnable(GL_FRAMEBUFFER_SRGB);
+
+	glPointSize(5.0f); // Adjust point size 
 }
 
 void initObjects() {
