@@ -79,8 +79,14 @@ bool showDepthMap;
 float canonAngle = 0.0f;
 float canonDirecion = 1.0f;
 
-glm::vec3 pointLightPosition(17.27f, 1.94f, 5.84f); // Origin
+// point light
+glm::vec3 pointLightPosition(17.27f, 1.94f, -7.0f); 
 glm::vec3 pointLightColor(1.0f, 0.5f, 0.5f);    // Reddish light
+float pointLightConstant = 1.0f;
+float pointLightLinear = 0.22f;
+float pointLightQuadratic = 0.20f;
+
+int shotTime = 0;
 
 
 GLenum glCheckError_(const char *file, int line) {
@@ -149,6 +155,10 @@ void scrollCallback(GLFWwindow* window, double xOffset, double yOffset) {
 
 void processMovement()
 {
+	if (pressedKeys[GLFW_KEY_X]) {
+		shotTime = 600;
+	}
+
 	if (pressedKeys[GLFW_KEY_J]) {
 		lightAngle -= 1.0f;		
 	}
@@ -296,9 +306,12 @@ void initUniforms() {
 	lightColorLoc = glGetUniformLocation(myCustomShader.shaderProgram, "lightColor");
 	glUniform3fv(lightColorLoc, 1, glm::value_ptr(lightColor));
 
-	//set point light position and color
+	//set point light position, color and attenuation
 	glUniform3fv(glGetUniformLocation(myCustomShader.shaderProgram, "pointLightPosition"), 1, glm::value_ptr(pointLightPosition));
 	glUniform3fv(glGetUniformLocation(myCustomShader.shaderProgram, "pointLightColor"), 1, glm::value_ptr(pointLightColor));
+	glUniform1f(glGetUniformLocation(myCustomShader.shaderProgram, "pointLightConstant"), pointLightConstant);
+	glUniform1f(glGetUniformLocation(myCustomShader.shaderProgram, "pointLightLinear"), pointLightLinear);
+	glUniform1f(glGetUniformLocation(myCustomShader.shaderProgram, "pointLightQuadratic"), pointLightQuadratic);
 
 
 	lightShader.useShaderProgram();
@@ -350,6 +363,7 @@ void drawObjects(gps::Shader shader, bool depthPass) {
 	}
 	model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f, -5.0f));
 	model = glm::rotate(model, glm::radians(180.0f + canonAngle), glm::vec3(0.0f, 1.0f, 0.0f));	// 180 first to position it in the right direction
+	model = glm::scale(model, glm::vec3(0.75f, 0.75f, 0.75f));
 	glUniformMatrix4fv(glGetUniformLocation(shader.shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
 	// do not send the normal matrix if we are rendering in the depth map
@@ -374,6 +388,65 @@ void drawObjects(gps::Shader shader, bool depthPass) {
 
 }
 
+void canonAnimation() {
+	if (shotTime == 0) {
+		pointLightLinear = 0.22f;
+		pointLightQuadratic = 0.20f;
+		return;
+	}
+
+	shotTime-=10;
+
+	if (shotTime > 500) {
+		pointLightLinear = 0.027f;
+		pointLightQuadratic = 0.0028f;
+	}
+	else if (shotTime > 450) {
+		pointLightLinear = 0.035f;
+		pointLightQuadratic = 0.005f;
+	}
+	else if (shotTime > 400) {
+		pointLightLinear = 0.045f;
+		pointLightQuadratic = 0.0075f;
+	}
+	else if (shotTime > 350) {
+		pointLightLinear = 0.055f;
+		pointLightQuadratic = 0.012f;
+	}
+	else if (shotTime > 300) {
+		pointLightLinear = 0.07f;
+		pointLightQuadratic = 0.017f;
+	}
+	else if (shotTime > 250) {
+		pointLightLinear = 0.08f;
+		pointLightQuadratic = 0.025f;
+	}
+	else if (shotTime > 200) {
+		pointLightLinear = 0.09f;
+		pointLightQuadratic = 0.032f;
+	}
+	else if (shotTime > 150) {
+		pointLightLinear = 0.11f;
+		pointLightQuadratic = 0.05f;
+	}
+	else if (shotTime > 100) {
+		pointLightLinear = 0.14f;
+		pointLightQuadratic = 0.07f;
+	}
+	else if (shotTime > 50) {
+		pointLightLinear = 0.18f;
+		pointLightQuadratic = 0.12f;
+	}
+	else {
+		pointLightLinear = 0.22f;
+		pointLightQuadratic = 0.20f;
+	}
+
+	myCustomShader.useShaderProgram();
+	glUniform1f(glGetUniformLocation(myCustomShader.shaderProgram, "pointLightLinear"), pointLightLinear);
+	glUniform1f(glGetUniformLocation(myCustomShader.shaderProgram, "pointLightQuadratic"), pointLightQuadratic);
+}
+
 void renderScene() {
 
 	// depth maps creation pass
@@ -386,6 +459,8 @@ void renderScene() {
 	glClear(GL_DEPTH_BUFFER_BIT);
 	drawObjects(depthMapShader, true);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	canonAnimation();
 
 	// render depth map on screen - toggled with the M key
 

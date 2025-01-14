@@ -21,12 +21,9 @@ uniform mat4 view;
 uniform vec3 pointLightPosition;
 uniform vec3 pointLightColor;
 
-// uniform float pointLightConstant;  	TODO for variable for canon
-// uniform float pointLightLinear;    
-// uniform float pointLightQuadratic; 
-float pointLightConstant = 1.0f;
-float pointLightLinear = 0.0045f;
-float pointLightQuadratic = 0.0075f;
+uniform float pointLightConstant;  	
+uniform float pointLightLinear;    
+uniform float pointLightQuadratic; 
 
 
 vec3 ambient;
