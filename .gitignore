@@ -1,17 +1,16 @@
-# Visual Studio files
+openGL_d_day/objects/scene/scene.obj
+
 .vs/
 *.vcxproj.user
 *.vcxproj.filters
 *.VC.db
 *.suo
 
-# Build output
 x64/
 Debug/
 Release/
 bin/
 obj/
 
-# OS-generated files
 .DS_Store
 Thumbs.db
