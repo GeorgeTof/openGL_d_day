@@ -79,6 +79,9 @@ bool showDepthMap;
 float canonAngle = 0.0f;
 float canonDirecion = 1.0f;
 
+glm::vec3 pointLightPosition(17.27f, 1.94f, 5.84f); // Origin
+glm::vec3 pointLightColor(1.0f, 0.5f, 0.5f);    // Reddish light
+
 
 GLenum glCheckError_(const char *file, int line) {
 	GLenum errorCode;
@@ -293,6 +296,10 @@ void initUniforms() {
 	lightColorLoc = glGetUniformLocation(myCustomShader.shaderProgram, "lightColor");
 	glUniform3fv(lightColorLoc, 1, glm::value_ptr(lightColor));
 
+	//set point light position and color
+	glUniform3fv(glGetUniformLocation(myCustomShader.shaderProgram, "pointLightPosition"), 1, glm::value_ptr(pointLightPosition));
+	glUniform3fv(glGetUniformLocation(myCustomShader.shaderProgram, "pointLightColor"), 1, glm::value_ptr(pointLightColor));
+
 
 	lightShader.useShaderProgram();
 	glUniformMatrix4fv(glGetUniformLocation(lightShader.shaderProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
@@ -426,18 +433,6 @@ void renderScene() {
 
 		drawObjects(myCustomShader, false);
 
-		//draw a white cube around the light
-
-		/*lightShader.useShaderProgram();
-
-		glUniformMatrix4fv(glGetUniformLocation(lightShader.shaderProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
-
-		model = lightRotation;
-		model = glm::translate(model, 80.0f * lightDir);
-		model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
-		glUniformMatrix4fv(glGetUniformLocation(lightShader.shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
-
-		lightCube.Draw(lightShader);*/
 	}
 }
 
