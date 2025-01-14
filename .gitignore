@@ -3,14 +3,22 @@ openGL_d_day/objects/scene/scene.obj
 .vs/
 *.vcxproj.user
 *.vcxproj.filters
-*.VC.db
 *.suo
+*.VC.db
+*.log
+*.ilk
+*.idb
+*.pdb
 
 x64/
 Debug/
 Release/
 bin/
 obj/
+openGL_d_day/x64/
+*.exe
+*.obj
+*.tlog/
 
 .DS_Store
 Thumbs.db

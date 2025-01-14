@@ -59,12 +59,9 @@ gps::Camera myCamera(
 float cameraSpeed = 0.01f;
 
 bool pressedKeys[1024];
-float angleY = 0.0f;
 GLfloat lightAngle;
 
-float lightDistance = 1.0f;
-
-gps::Model3D nanosuit;
+gps::Model3D canon;
 gps::Model3D scene;
 gps::Model3D ground;
 gps::Model3D lightCube;
@@ -79,6 +76,9 @@ GLuint shadowMapFBO;
 GLuint depthMapTexture;
 
 bool showDepthMap;
+float canonAngle = 0.0f;
+float canonDirecion = 1.0f;
+
 
 GLenum glCheckError_(const char *file, int line) {
 	GLenum errorCode;
@@ -138,14 +138,6 @@ void scrollCallback(GLFWwindow* window, double xOffset, double yOffset) {
 
 void processMovement()
 {
-	if (pressedKeys[GLFW_KEY_Q]) {
-		angleY -= 1.0f;		
-	}
-
-	if (pressedKeys[GLFW_KEY_E]) {
-		angleY += 1.0f;		
-	}
-
 	if (pressedKeys[GLFW_KEY_J]) {
 		lightAngle -= 1.0f;		
 	}
@@ -168,14 +160,6 @@ void processMovement()
 
 	if (pressedKeys[GLFW_KEY_D]) {
 		myCamera.move(gps::MOVE_RIGHT, cameraSpeed);		
-	}
-
-	if (pressedKeys[GLFW_KEY_I]) {
-		lightDistance += 0.1f;
-	}
-
-	if (pressedKeys[GLFW_KEY_K]) {
-		lightDistance -= 0.1f;
 	}
 }
 
@@ -250,7 +234,7 @@ void initOpenGLState()
 }
 
 void initObjects() {
-	nanosuit.LoadModel("objects/nanosuit/nanosuit.obj");
+	canon.LoadModel("objects/canon/canon.obj");
 	scene.LoadModel("objects/scene/scene.obj");
 	ground.LoadModel("objects/ground/ground.obj");
 	lightCube.LoadModel("objects/cube/cube.obj");
@@ -342,9 +326,13 @@ glm::mat4 computeLightSpaceTrMatrix() {
 void drawObjects(gps::Shader shader, bool depthPass) {
 		
 	shader.useShaderProgram();
-	
-	model = glm::rotate(glm::mat4(1.0f), glm::radians(angleY), glm::vec3(0.0f, 1.0f, 0.0f));
-	model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+	canonAngle += (0.2f * canonDirecion);
+	if (abs(canonAngle) > 37) {
+		canonDirecion *= -1;
+	}
+	model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f, -5.0f));
+	model = glm::rotate(model, glm::radians(180.0f + canonAngle), glm::vec3(0.0f, 1.0f, 0.0f));	// 180 first to position it in the right direction
 	glUniformMatrix4fv(glGetUniformLocation(shader.shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
 	// do not send the normal matrix if we are rendering in the depth map
@@ -353,7 +341,7 @@ void drawObjects(gps::Shader shader, bool depthPass) {
 		glUniformMatrix3fv(normalMatrixLoc, 1, GL_FALSE, glm::value_ptr(normalMatrix));
 	}
 
-	nanosuit.Draw(shader);
+	canon.Draw(shader);
 
 	
 	model = glm::mat4(1.0f);
