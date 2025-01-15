@@ -24,6 +24,7 @@
 #include "Shader.hpp"
 #include "Model3D.hpp"
 #include "Camera.hpp"
+#include "SkyBox.hpp"
 
 #include <iostream>
 
@@ -111,6 +112,10 @@ bool autoTour = false;
 
 // Fog
 float isFog = 0.0f;
+
+// Skybox
+gps::SkyBox mySkyBox;
+gps::Shader skyboxShader;
 
 
 GLenum glCheckError_(const char *file, int line) {
@@ -358,6 +363,9 @@ void initShaders() {
 
 	depthMapShader.loadShader("shaders/depthMap.vert", "shaders/depthMap.frag");
 	depthMapShader.useShaderProgram();
+
+	skyboxShader.loadShader("shaders/skyboxShader.vert", "shaders/skyboxShader.frag");
+	skyboxShader.useShaderProgram();
 }
 
 void initUniforms() {
@@ -425,6 +433,18 @@ void initFBO() {
 	glReadBuffer(GL_NONE);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void initSkybox()
+{
+	std::vector<const GLchar*> faces;
+	faces.push_back("skybox/right.tga");
+	faces.push_back("skybox/left.tga");
+	faces.push_back("skybox/top.tga");
+	faces.push_back("skybox/bottom.tga");
+	faces.push_back("skybox/back.tga");
+	faces.push_back("skybox/front.tga");
+	mySkyBox.Load(faces);
 }
 
 glm::mat4 computeLightSpaceTrMatrix() {
@@ -547,10 +567,6 @@ void renderScene() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	canonAnimation();
-	//view = myCamera.getViewMatrix();									// update the camerea view matrix for the animated tour
-	//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-
-	// render depth map on screen - toggled with the M key
 
 	if (showDepthMap) {
 		glViewport(0, 0, retina_width, retina_height);
@@ -596,6 +612,8 @@ void renderScene() {
 
 		drawObjects(myCustomShader, false);
 
+		mySkyBox.Draw(skyboxShader, view, projection);
+
 	}
 }
 
@@ -620,6 +638,7 @@ int main(int argc, const char * argv[]) {
 	initShaders();
 	initUniforms();
 	initFBO();
+	initSkybox();
 
 	glCheckError();
 
