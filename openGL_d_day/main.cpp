@@ -156,7 +156,7 @@ void windowResizeCallback(GLFWwindow* window, int width, int height) {
 	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 }
 
-void thunderSound()
+void playThunder()
 {
 	PlaySound(TEXT("objects/thunder.wav"), NULL, SND_FILENAME | SND_ASYNC);
 }
@@ -168,8 +168,10 @@ void keyboardCallback(GLFWwindow* window, int key, int scancode, int action, int
 	if (key == GLFW_KEY_M && action == GLFW_PRESS)
 		showDepthMap = !showDepthMap;
 
+	if (key == GLFW_KEY_V && action == GLFW_PRESS)
+		playThunder();
+
 	if (key == GLFW_KEY_N && action == GLFW_PRESS) {
-		thunderSound();
 		night = !night;
 		myCustomShader.useShaderProgram();
 		if (night) {
