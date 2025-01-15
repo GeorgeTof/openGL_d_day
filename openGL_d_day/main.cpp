@@ -115,7 +115,9 @@ float isFog = 0.0f;
 
 // Skybox
 gps::SkyBox mySkyBox;
+gps::SkyBox mySkyBoxNight;
 gps::Shader skyboxShader;
+bool night = 0;
 
 
 GLenum glCheckError_(const char *file, int line) {
@@ -156,6 +158,16 @@ void keyboardCallback(GLFWwindow* window, int key, int scancode, int action, int
 
 	if (key == GLFW_KEY_M && action == GLFW_PRESS)
 		showDepthMap = !showDepthMap;
+
+	if (key == GLFW_KEY_N && action == GLFW_PRESS)
+		night = !night;
+
+	if (key == GLFW_KEY_F && action == GLFW_PRESS) {
+		isFog = 1.0f - isFog;
+		std::cout << "Fog state changed";
+		myCustomShader.useShaderProgram();
+		glUniform1f(glGetUniformLocation(myCustomShader.shaderProgram, "isFog"), isFog);
+	}
 
 	if (key == GLFW_KEY_1 && action == GLFW_PRESS)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // Default rendering mode
@@ -212,12 +224,6 @@ void processMovement()
 	// check other inputs
 	if (pressedKeys[GLFW_KEY_X]) {
 		shotTime = 600;
-	}
-
-	if (pressedKeys[GLFW_KEY_F]) {
-		isFog = 1.0f - isFog;
-		std::cout << "Fog state changed";
-		glUniform1f(glGetUniformLocation(myCustomShader.shaderProgram, "isFog"), isFog);
 	}
 
 	if (pressedKeys[GLFW_KEY_J]) {
@@ -444,7 +450,21 @@ void initSkybox()
 	faces.push_back("skybox/bottom.tga");
 	faces.push_back("skybox/back.tga");
 	faces.push_back("skybox/front.tga");
+
 	mySkyBox.Load(faces);
+}
+
+void initSkyboxNight()
+{
+	std::vector<const GLchar*> faces;
+	faces.push_back("nightsky/nightsky_rt.tga");
+	faces.push_back("nightsky/nightsky_lf.tga");
+	faces.push_back("nightsky/nightsky_up.tga");
+	faces.push_back("nightsky/nightsky_dn.tga");
+	faces.push_back("nightsky/nightsky_bk.tga");
+	faces.push_back("nightsky/nightsky_ft.tga");
+
+	mySkyBoxNight.Load(faces);
 }
 
 glm::mat4 computeLightSpaceTrMatrix() {
@@ -612,7 +632,12 @@ void renderScene() {
 
 		drawObjects(myCustomShader, false);
 
-		mySkyBox.Draw(skyboxShader, view, projection);
+		if (night && isFog == 0.0f) {
+			mySkyBoxNight.Draw(skyboxShader, view, projection);
+		}
+		else if (isFog == 0.0f) {
+			mySkyBox.Draw(skyboxShader, view, projection);
+		}
 
 	}
 }
@@ -639,6 +664,7 @@ int main(int argc, const char * argv[]) {
 	initUniforms();
 	initFBO();
 	initSkybox();
+	initSkyboxNight();
 
 	glCheckError();
 
