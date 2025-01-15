@@ -88,6 +88,42 @@ float pointLightQuadratic = 0.20f;
 
 int shotTime = 0;
 
+// Automated tour waypoints
+//std::vector<glm::vec3> tourPositions = {
+//	glm::vec3(0.0f, 3.0f, 10.0f),   
+//	glm::vec3(5.0f, 5.0f, 5.0f),    
+//	glm::vec3(-5.0f, 2.0f, -10.0f), 
+//	glm::vec3(0.0f, 8.0f, -15.0f), 
+//	glm::vec3(10.0f, 3.0f, 0.0f)    
+//};
+//
+//std::vector<glm::vec3> tourTargets = {
+//	glm::vec3(0.0f, 0.0f, 0.0f),   
+//	glm::vec3(3.0f, 1.0f, -5.0f),  
+//	glm::vec3(-3.0f, 0.0f, -5.0f), 
+//	glm::vec3(2.0f, 2.0f, -10.0f), 
+//	glm::vec3(0.0f, 0.0f, 0.0f)    
+//};
+std::vector<glm::vec3> tourPositions = {
+	glm::vec3(23.4f, 13.5f, 72.0f),
+	glm::vec3(18.0f, 14.0f, 55.0f),
+	glm::vec3(-2.4f, 14.0f, -24.8f),
+	glm::vec3(0.0f, 1.5f, -6.7f),
+	glm::vec3(-5.1f, 1.5f, -26.4f)
+};
+
+std::vector<glm::vec3> tourTargets = {
+	glm::vec3(18.0f, 14.0f, 55.0f),
+	glm::vec3(-2.4f, 14.0f, -24.8f),
+	glm::vec3(0.0f, 1.5f, -6.7f),
+	glm::vec3(-5.1f, 1.5f, -26.4f),
+	glm::vec3(15.9f, 2.2f, -19.0f)
+};
+
+int currentSegment = 0;
+float t = 0.0f; // Interpolation parameter
+bool autoTour = false;
+
 
 GLenum glCheckError_(const char *file, int line) {
 	GLenum errorCode;
@@ -137,6 +173,18 @@ void keyboardCallback(GLFWwindow* window, int key, int scancode, int action, int
 	if (key == GLFW_KEY_3 && action == GLFW_PRESS)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_POINT); // Point mode
 
+	if (key == GLFW_KEY_T && action == GLFW_PRESS) {
+		autoTour = !autoTour;
+		if (autoTour) {
+			currentSegment = 0;
+			t = 0.0f;
+			std::cout << "Starting Automated Tour...\n";
+		}
+		else {
+			std::cout << "Stopping Automated Tour...\n";
+		}
+	}
+
 	if (key >= 0 && key < 1024) {
 		if (action == GLFW_PRESS)
 			pressedKeys[key] = true;
@@ -168,6 +216,7 @@ void scrollCallback(GLFWwindow* window, double xOffset, double yOffset) {
 
 void processMovement()
 {
+	// check other inputs
 	if (pressedKeys[GLFW_KEY_X]) {
 		shotTime = 600;
 	}
@@ -180,20 +229,47 @@ void processMovement()
 		lightAngle += 1.0f;
 	}
 
-	if (pressedKeys[GLFW_KEY_W]) {
-		myCamera.move(gps::MOVE_FORWARD, cameraSpeed);		
-	}
+	if (autoTour) {
+		if (currentSegment < tourPositions.size() - 1) {
+			// Interpolate between current and next waypoint
+			glm::vec3 startPos = tourPositions[currentSegment];
+			glm::vec3 endPos = tourPositions[currentSegment + 1];
+			glm::vec3 startTarget = tourTargets[currentSegment];
+			glm::vec3 endTarget = tourTargets[currentSegment + 1];
 
-	if (pressedKeys[GLFW_KEY_S]) {
-		myCamera.move(gps::MOVE_BACKWARD, cameraSpeed);		
-	}
+			// Compute interpolated position and target
+			glm::vec3 newPosition = glm::mix(startPos, endPos, t);
+			glm::vec3 newTarget = glm::mix(startTarget, endTarget, t);
 
-	if (pressedKeys[GLFW_KEY_A]) {
-		myCamera.move(gps::MOVE_LEFT, cameraSpeed);		
-	}
+			myCamera.setPosition(newPosition);
+			myCamera.setTarget(newTarget);
 
-	if (pressedKeys[GLFW_KEY_D]) {
-		myCamera.move(gps::MOVE_RIGHT, cameraSpeed);		
+			// Increment t for interpolation speed
+			t += 0.01f;
+			if (t >= 1.0f) {
+				t = 0.0f;
+				currentSegment++;
+			}
+		}
+		else {
+			autoTour = false; // End tour after the last segment
+			std::cout << "Automated Tour Completed." << std::endl;
+		}
+	}
+	else {
+		// 2. Only process WASD movement if NOT in autoTour
+		if (pressedKeys[GLFW_KEY_W]) {
+			myCamera.move(gps::MOVE_FORWARD, cameraSpeed);
+		}
+		if (pressedKeys[GLFW_KEY_S]) {
+			myCamera.move(gps::MOVE_BACKWARD, cameraSpeed);
+		}
+		if (pressedKeys[GLFW_KEY_A]) {
+			myCamera.move(gps::MOVE_LEFT, cameraSpeed);
+		}
+		if (pressedKeys[GLFW_KEY_D]) {
+			myCamera.move(gps::MOVE_RIGHT, cameraSpeed);
+		}
 	}
 }
 
@@ -475,6 +551,8 @@ void renderScene() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	canonAnimation();
+	//view = myCamera.getViewMatrix();									// update the camerea view matrix for the animated tour
+	//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
 	// render depth map on screen - toggled with the M key
 

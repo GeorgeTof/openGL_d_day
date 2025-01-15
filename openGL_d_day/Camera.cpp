@@ -79,8 +79,19 @@ namespace gps {
             zoom = 70.0f;
     }
 
+    void Camera::setPosition(const glm::vec3& newPosition) {
+        this->cameraPosition = newPosition;
+    }
+
+    void Camera::setTarget(const glm::vec3& newTarget) {
+        //this->cameraTarget = newTarget;       // not working
+         this->cameraFrontDirection = glm::normalize(newTarget - this->cameraPosition);
+    }
+
     glm::mat4 Camera::getProjectionMatrix(float aspectRatio)
     {
         return glm::perspective(zoom, aspectRatio, nearPlane, farPlane);
     }
+
+
 }

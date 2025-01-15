@@ -21,6 +21,8 @@ namespace gps {
         void mouseCallback(GLFWwindow* window, double xPos, double yPos);
         void keyboardCallback(float deltaTime, GLFWwindow* window, int key, int scancode, int action, int mode);
         void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+        void setTarget(const glm::vec3& newTarget);
+        void setPosition(const glm::vec3& newPosition);
         glm::mat4 getProjectionMatrix(float aspectRatio);
 
     private:
