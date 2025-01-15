@@ -89,21 +89,6 @@ float pointLightQuadratic = 0.20f;
 int shotTime = 0;
 
 // Automated tour waypoints
-//std::vector<glm::vec3> tourPositions = {
-//	glm::vec3(0.0f, 3.0f, 10.0f),   
-//	glm::vec3(5.0f, 5.0f, 5.0f),    
-//	glm::vec3(-5.0f, 2.0f, -10.0f), 
-//	glm::vec3(0.0f, 8.0f, -15.0f), 
-//	glm::vec3(10.0f, 3.0f, 0.0f)    
-//};
-//
-//std::vector<glm::vec3> tourTargets = {
-//	glm::vec3(0.0f, 0.0f, 0.0f),   
-//	glm::vec3(3.0f, 1.0f, -5.0f),  
-//	glm::vec3(-3.0f, 0.0f, -5.0f), 
-//	glm::vec3(2.0f, 2.0f, -10.0f), 
-//	glm::vec3(0.0f, 0.0f, 0.0f)    
-//};
 std::vector<glm::vec3> tourPositions = {
 	glm::vec3(23.4f, 13.5f, 72.0f),
 	glm::vec3(18.0f, 14.0f, 55.0f),
@@ -123,6 +108,9 @@ std::vector<glm::vec3> tourTargets = {
 int currentSegment = 0;
 float t = 0.0f; // Interpolation parameter
 bool autoTour = false;
+
+// Fog
+float isFog = 0.0f;
 
 
 GLenum glCheckError_(const char *file, int line) {
@@ -219,6 +207,12 @@ void processMovement()
 	// check other inputs
 	if (pressedKeys[GLFW_KEY_X]) {
 		shotTime = 600;
+	}
+
+	if (pressedKeys[GLFW_KEY_F]) {
+		isFog = 1.0f - isFog;
+		std::cout << "Fog state changed";
+		glUniform1f(glGetUniformLocation(myCustomShader.shaderProgram, "isFog"), isFog);
 	}
 
 	if (pressedKeys[GLFW_KEY_J]) {
@@ -403,6 +397,8 @@ void initUniforms() {
 	glUniform1f(glGetUniformLocation(myCustomShader.shaderProgram, "pointLightLinear"), pointLightLinear);
 	glUniform1f(glGetUniformLocation(myCustomShader.shaderProgram, "pointLightQuadratic"), pointLightQuadratic);
 
+	//set the fog uniform
+	glUniform1f(glGetUniformLocation(myCustomShader.shaderProgram, "isFog"), isFog);
 
 	lightShader.useShaderProgram();
 	glUniformMatrix4fv(glGetUniformLocation(lightShader.shaderProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
