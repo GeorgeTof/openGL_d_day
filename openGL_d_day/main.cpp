@@ -6,12 +6,15 @@
 //  Copyright � 2016 CGIS. All rights reserved.
 //
 
+#include <windows.h>
+#pragma comment(lib, "winmm.lib") 
+
 #if defined (__APPLE__)
-    #define GLFW_INCLUDE_GLCOREARB
-    #define GL_SILENCE_DEPRECATION
+#define GLFW_INCLUDE_GLCOREARB
+#define GL_SILENCE_DEPRECATION
 #else
-    #define GLEW_STATIC
-    #include <GL/glew.h>
+#define GLEW_STATIC
+#include <GL/glew.h>
 #endif
 
 #include <GLFW/glfw3.h>
@@ -27,6 +30,7 @@
 #include "SkyBox.hpp"
 
 #include <iostream>
+
 
 int glWindowWidth = 800;
 int glWindowHeight = 600;
@@ -152,6 +156,11 @@ void windowResizeCallback(GLFWwindow* window, int width, int height) {
 	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 }
 
+void thunderSound()
+{
+	PlaySound(TEXT("objects/thunder.wav"), NULL, SND_FILENAME | SND_ASYNC);
+}
+
 void keyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mode) {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
@@ -160,6 +169,7 @@ void keyboardCallback(GLFWwindow* window, int key, int scancode, int action, int
 		showDepthMap = !showDepthMap;
 
 	if (key == GLFW_KEY_N && action == GLFW_PRESS) {
+		thunderSound();
 		night = !night;
 		myCustomShader.useShaderProgram();
 		if (night) {
