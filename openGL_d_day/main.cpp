@@ -159,8 +159,20 @@ void keyboardCallback(GLFWwindow* window, int key, int scancode, int action, int
 	if (key == GLFW_KEY_M && action == GLFW_PRESS)
 		showDepthMap = !showDepthMap;
 
-	if (key == GLFW_KEY_N && action == GLFW_PRESS)
+	if (key == GLFW_KEY_N && action == GLFW_PRESS) {
 		night = !night;
+		myCustomShader.useShaderProgram();
+		if (night) {
+			lightColor = glm::vec3(0.4f, 0.2f, 0.4f); //weak light
+			lightColorLoc = glGetUniformLocation(myCustomShader.shaderProgram, "lightColor");
+			glUniform3fv(lightColorLoc, 1, glm::value_ptr(lightColor));
+		}
+		else {
+			lightColor = glm::vec3(1.0f, 1.0f, 1.0f); //white light
+			lightColorLoc = glGetUniformLocation(myCustomShader.shaderProgram, "lightColor");
+			glUniform3fv(lightColorLoc, 1, glm::value_ptr(lightColor));
+		}
+	}
 
 	if (key == GLFW_KEY_F && action == GLFW_PRESS) {
 		isFog = 1.0f - isFog;
