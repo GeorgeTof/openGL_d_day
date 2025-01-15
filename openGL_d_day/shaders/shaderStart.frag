@@ -136,5 +136,8 @@ void main()
 	else{
 		fColor = vec4(color, 1.0f);
 	}
-    
+
+	// fragment discarding
+	if(texture(diffuseTexture, fTexCoords).a < 0.1) 
+		discard; 
 }
